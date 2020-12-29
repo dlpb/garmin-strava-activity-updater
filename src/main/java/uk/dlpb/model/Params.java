@@ -34,7 +34,13 @@ public class Params {
         garminGearToRemove = Arrays.asList(params[4].split(","));
         garminGearToAdd = Arrays.asList(params[5]);
 
-
+        System.out.println("Created parameters of:");
+        System.out.println("    garminActivitiesFilePath - " + garminActivitiesFilePath);
+        System.out.println("    stravaActivitiesFilePath - " + stravaActivitiesFilePath);
+        System.out.println("    garminToken - " + garminToken);
+        System.out.println("    stravaFilterGear - " + stravaFilterGear);
+        System.out.println("    garminGearToRemove - " + garminGearToRemove);
+        System.out.println("    garminGearToAdd - " + garminGearToAdd);
 
     }
 
