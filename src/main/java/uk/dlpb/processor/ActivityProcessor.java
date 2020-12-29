@@ -55,12 +55,12 @@ public class ActivityProcessor {
                 .header( "X-HTTP-Method-Override","PUT" )
                 .header( "X-Requested-With","XMLHttpRequest" )
                 .header( "Origin","https://connect.garmin.com" )
-                .header( "Connection","keep-alive" )
                 .header( "Referer","https://connect.garmin.com/modern/activity/5997342560" )
                 .header( "Cookie", garminToken )
                 .header( "DNT","1" )
                 .header( "Sec-GPC","1" )
                 .header( "TE","Trailers")
+                .PUT(HttpRequest.BodyPublishers.noBody())
                 .build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
