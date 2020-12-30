@@ -733,8 +733,8 @@ public class StravaActivity {
             activity.setActivity_Name(record.get("Activity Name"));
             activity.setActivity_Type(record.get("Activity Type"));
             activity.setActivity_Description(record.get("Activity Description"));
-            activity.setElapsed_Time(Double.parseDouble(record.get("Elapsed Time")));
-            activity.setDistance(Double.parseDouble(record.get(6)));
+            activity.setElapsed_Time(Double.parseDouble("0" + record.get("Elapsed Time")));
+            activity.setDistance(Double.parseDouble(record.get(6).replaceAll(",", "")));
             activity.setRelative_Effort(record.get("Relative Effort"));
             activity.setCommute(Boolean.parseBoolean(record.get("Commute")));
             activity.setActivity_Gear(record.get("Activity Gear"));
@@ -814,6 +814,6 @@ public class StravaActivity {
     }
 
     static LocalDateTime getDate(String dateString) {
-        return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm:ss"));
+        return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern("d MMM yyyy, HH:mm:ss"));
     }
 }

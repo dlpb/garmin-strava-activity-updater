@@ -7,11 +7,12 @@ import uk.dlpb.model.StravaActivity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ProcessorTest {
 
@@ -56,10 +57,40 @@ public class ProcessorTest {
         garminActivities.add(garminActivity1);
         garminActivities.add(garminActivity2);
 
-        GarminActivity matchedActivityForStravaActivity1 = processor.findMatchedGarminActivity(stravaActivity1, garminActivities.stream());
-        GarminActivity matchedActivityForStravaActivity2 = processor.findMatchedGarminActivity(stravaActivity2, garminActivities.stream());
-        assertEquals(matchedActivityForStravaActivity1.getActivityName(), "Activity 1");
-        assertEquals(matchedActivityForStravaActivity2.getActivityName(), "Activity 2");
+        Optional<GarminActivity> matchedActivityForStravaActivity1 = processor.findMatchedGarminActivity(stravaActivity1, garminActivities);
+        Optional<GarminActivity> matchedActivityForStravaActivity2 = processor.findMatchedGarminActivity(stravaActivity2, garminActivities);
+        assertEquals(matchedActivityForStravaActivity1.get().getActivityName(), "Activity 1");
+        assertEquals(matchedActivityForStravaActivity2.get().getActivityName(), "Activity 2");
+    }
+
+    @Test
+    public void processorShouldFindTheMatchingGarminActivityForAStravaActivityWhereStartTimeIsSlightlyOut(){
+        ActivityProcessor processor = new ActivityProcessor();
+
+        List<StravaActivity> stravaActivities = new ArrayList<>();
+        StravaActivity stravaActivity1 = new StravaActivity();
+        stravaActivity1.setActivity_Date(LocalDateTime.of(2018,4,17,16,21,26));
+        stravaActivity1.setActivity_Gear("Bike");
+        StravaActivity stravaActivity2 = new StravaActivity();
+        stravaActivity2.setActivity_Date(LocalDateTime.of(2018,4,17,17,19,12));
+        stravaActivity2.setActivity_Gear("Shoes");
+        stravaActivities.add(stravaActivity1);
+        stravaActivities.add(stravaActivity2);
+
+        List<GarminActivity> garminActivities = new ArrayList<>();
+        GarminActivity garminActivity1 = new GarminActivity();
+        garminActivity1.setActivityName("Activity 1");
+        garminActivity1.setStartTimeGMT(LocalDateTime.of(2018,4,17,16,21,26));
+        GarminActivity garminActivity2 = new GarminActivity();
+        garminActivity2.setActivityName("Activity 2");
+        garminActivity2.setStartTimeGMT(LocalDateTime.of(2018,4,17,17,19,0));
+        garminActivities.add(garminActivity1);
+        garminActivities.add(garminActivity2);
+
+        Optional<GarminActivity> matchedActivityForStravaActivity1 = processor.findMatchedGarminActivity(stravaActivity1, garminActivities);
+        Optional<GarminActivity> matchedActivityForStravaActivity2 = processor.findMatchedGarminActivity(stravaActivity2, garminActivities);
+        assertEquals(matchedActivityForStravaActivity1.get().getActivityName(), "Activity 1");
+        assertEquals(matchedActivityForStravaActivity2.get().getActivityName(), "Activity 2");
     }
 
     @Test
@@ -78,9 +109,9 @@ public class ProcessorTest {
 
         List<GarminActivity> garminActivities = new ArrayList<>();
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            GarminActivity matchedActivityForStravaActivity1 = processor.findMatchedGarminActivity(stravaActivity1, garminActivities.stream());
-        });
-        assertEquals(exception.getMessage(), "No matching activity found for Strava Activity null - null - on - 2020-12-24T10:00");
+
+        Optional<GarminActivity> matchedActivityForStravaActivity1 = processor.findMatchedGarminActivity(stravaActivity1, garminActivities);
+
+        assertTrue(matchedActivityForStravaActivity1.isEmpty());
     }
 }
